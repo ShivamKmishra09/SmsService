@@ -11,6 +11,7 @@ public class SmsRequest {
 
     @NotBlank(message = "Message is required")
     private String message;
+    private String userId;
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -26,5 +27,13 @@ public class SmsRequest {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

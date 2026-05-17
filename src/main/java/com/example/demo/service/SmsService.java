@@ -34,6 +34,17 @@ public class SmsService {
                 request.getPhoneNumber()
         )) {
 
+            SmsEvent blockedEvent = new SmsEvent(
+                    request.getUserId(),
+                    request.getPhoneNumber(),
+                    request.getMessage(),
+                    "BLOCKED",
+                    "User is blocked"
+            );
+
+            kafkaProducerService
+                    .publishSmsEvent(blockedEvent);
+
             return new SmsResponse(
                     "FAILURE",
                     "User is blocked"
@@ -53,19 +64,34 @@ public class SmsService {
 
         if(success) {
 
-            SmsEvent smsEvent = new SmsEvent(
+            SmsEvent successEvent = new SmsEvent(
+                    request.getUserId(),
                     request.getPhoneNumber(),
                     request.getMessage(),
-                    "SUCCESS"
+                    "SUCCESS",
+                    "SMS Sent Successfully"
             );
 
-            kafkaProducerService.publishSmsEvent(smsEvent);
+            kafkaProducerService
+                    .publishSmsEvent(successEvent);
 
             return new SmsResponse(
                     "SUCCESS",
                     "SMS Sent Successfully"
             );
         }
+
+        SmsEvent failureEvent = new SmsEvent(
+                request.getUserId(),
+                request.getPhoneNumber(),
+                request.getMessage(),
+                "FAILURE",
+                "Vendor failed to send SMS"
+        );
+
+        kafkaProducerService
+                .publishSmsEvent(failureEvent);
+
         return new SmsResponse(
                 "FAILURE",
                 "SMS Sending Failed"
